@@ -16,7 +16,7 @@ const upload = multer(uploadConfig);
 
 router.post("/books", upload.single("file"), new CreateBookController().handle);
 router.get("/books", new ListBookController().handle);
-router.get("/book/show", validateSchema(listBooksSchema), new ShowBookController().handle);
+router.post("/book/show", validateSchema(listBooksSchema), new ShowBookController().handle);
 router.put("/book", upload.single("file"), validateSchema(updateBookSchema), new UpdateBookController().handle);
 router.delete("/book", validateSchema(deleteBooksSchema), new DeleteBookController().handle);
 
