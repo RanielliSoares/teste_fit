@@ -151,7 +151,7 @@ export default function BookDetails() {
           title="Editar Livro"
           book={book}
           onCancel={() => setShowModalEdit(false)}
-          onSave={() => { console.log("Salvar edição") }}
+          onSave={() => window.location.reload()}
         />
       )}
     </div>
