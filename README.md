@@ -32,7 +32,7 @@ docker compose up -d --build
 | Serviço  | URL                       |
 |----------|---------------------------|
 | Frontend | http://localhost:3000     |
-| API      | http://localhost:8000     |
+
 
 > As migrações do banco de dados são aplicadas automaticamente na inicialização do backend.
 
