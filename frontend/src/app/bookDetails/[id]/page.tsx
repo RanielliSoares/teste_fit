@@ -89,7 +89,7 @@ export default function BookDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-background px-8 py-8">
+    <div className="min-h-screen bg-background px-24 py-8">
       <div className="flex items-center justify-between mb-6">
         <button className="flex items-center gap-1 text-[24px] font-semibold text-foreground hover:opacity-70 transition-opacity cursor-pointer"
           onClick={() => router.push("/")}>

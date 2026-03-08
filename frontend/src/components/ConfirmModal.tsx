@@ -5,8 +5,8 @@ interface ConfirmModalProps {
   message: string;
   confirmText: string;
   cancelText: string;
-  confirmColor?: string; // classes tailwind para cor do botão confirmar
-  cancelColor?: string;  // classes tailwind para cor do botão cancelar
+  confirmColor?: string; 
+  cancelColor?: string;  
   onConfirm: () => void;
   onCancel: () => void;
 }

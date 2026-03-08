@@ -180,7 +180,7 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
           </div>
         </div>
 
-        {/* Botões */}
+        
         <div className="flex justify-center gap-6 mt-8">
           <button onClick={onCancel} className="px-6 py-2 rounded-full bg-gray-200 min-w-[228px] hover:bg-gray-300">Cancelar</button>
           <button
