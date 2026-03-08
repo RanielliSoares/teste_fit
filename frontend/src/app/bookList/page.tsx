@@ -18,6 +18,7 @@ interface Book {
 
 export default function BookList() {
   const [books, setBooks] = useState<Book[]>([]);
+  const [searchTerm, setSearchTerm] = useState(""); // novo estado
   const router = useRouter();
   const [showModalEdit, setShowModalEdit] = useState(false);
 
@@ -33,12 +34,18 @@ export default function BookList() {
     fetchBooks();
   }, []);
 
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-background px-8 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-[2.5rem] font-bold text-foreground">Livros</h1>
-        <button className="text-2xl font-bold text-foreground hover:opacity-70 transition-opacity"
-          onClick={() => setShowModalEdit(true)}>
+        <button
+          className="text-2xl font-bold text-foreground hover:opacity-70 transition-opacity"
+          onClick={() => setShowModalEdit(true)}
+        >
           Novo
         </button>
       </div>
@@ -47,6 +54,8 @@ export default function BookList() {
         <input
           type="text"
           placeholder="Buscar"
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full bg-white rounded-xl px-4 py-3 pr-12 text-[#222222] placeholder-gray-400 shadow-sm focus:ring-2 focus:ring-gray-300"
         />
         <MagnifyingGlassIcon
@@ -55,10 +64,10 @@ export default function BookList() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {books.map((book) => (
+        {filteredBooks.map((book) => (
           <div
             key={book.id}
-            onClick={() => router.push(`/bookDetails/${book.id}`)} // navega para detalhes
+            onClick={() => router.push(`/bookDetails/${book.id}`)}
             className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
           >
             <div className="bg-[#E8E8E8] flex items-center justify-center h-48">
@@ -80,6 +89,7 @@ export default function BookList() {
           </div>
         ))}
       </div>
+
       {showModalEdit && (
         <BookFormModal
           title="Criar Livro"
