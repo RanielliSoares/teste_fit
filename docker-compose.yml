@@ -6,6 +6,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -16,14 +18,16 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: backend
+    ports:
+      - "${API_PORT}:8000"
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${POSTGRES_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      PORT: 3333
-      APP_URL: ${PUBLIC_URL}
+      PORT: 8000
+      APP_URL: http://localhost:${API_PORT}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
     volumes:
       - ./backend/uploads:/app/uploads
@@ -38,27 +42,13 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=${PUBLIC_URL}/api
+        - NEXT_PUBLIC_API_URL=http://localhost:${API_PORT}
     container_name: frontend
-    environment:
-      - NEXT_PUBLIC_API_URL=${PUBLIC_URL}/api
-    depends_on:
-      - api
-    restart: unless-stopped
-    networks:
-      - livros-network
-
-  caddy:
-    image: caddy:2-alpine
-    container_name: caddy
     ports:
-      - "80:80"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:${API_PORT}
     depends_on:
-      - frontend
       - api
     restart: unless-stopped
     networks:
@@ -66,8 +56,6 @@ services:
 
 volumes:
   postgres_data:
-  caddy_data:
-  caddy_config:
 
 
 networks:
