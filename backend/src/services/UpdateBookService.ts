@@ -8,7 +8,7 @@ interface UpdateBookServiceProps {
     author: string;
     description: string;
     publication_date: Date;
-    picture_url: string;
+    picture_url?: string;
 }
 
 class UpdateBookService {
@@ -23,18 +23,22 @@ class UpdateBookService {
         }
 
      
-        if (bookAlreadyExists.picture_url) {
-            const oldFilename = bookAlreadyExists.picture_url.split('/uploads/')[1];
-            if (oldFilename) {
-                const oldFilePath = path.resolve(__dirname, '..', 'uploads', oldFilename);
-                if (fs.existsSync(oldFilePath)) {
-                    fs.unlinkSync(oldFilePath);
+        let pictureUrl: string | undefined;
+
+        if (picture_url) {
+            if (bookAlreadyExists.picture_url) {
+                const oldFilename = bookAlreadyExists.picture_url.split('/uploads/')[1];
+                if (oldFilename) {
+                    const oldFilePath = path.resolve(__dirname, '..', 'uploads', oldFilename);
+                    if (fs.existsSync(oldFilePath)) {
+                        fs.unlinkSync(oldFilePath);
+                    }
                 }
             }
-        }
 
-        const appUrl = process.env.APP_URL || 'http://localhost:3333';
-        const pictureUrl = `${appUrl}/uploads/${picture_url}`;
+            const appUrl = process.env.APP_URL || 'http://localhost:3333';
+            pictureUrl = `${appUrl}/uploads/${picture_url}`;
+        }
 
         const book = await prismaClient.book.update({
             where: { id },
@@ -43,7 +47,7 @@ class UpdateBookService {
                 author,
                 description,
                 publication_date,
-                picture_url: pictureUrl
+                ...(pictureUrl && { picture_url: pictureUrl }),
             }
         });
 
