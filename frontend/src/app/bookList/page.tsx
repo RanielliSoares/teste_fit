@@ -39,7 +39,7 @@ export default function BookList() {
   );
 
   return (
-    <div className="min-h-screen bg-background px-8 py-8">
+    <div className="min-h-screen bg-background px-24 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-[2.5rem] font-bold text-foreground">Livros</h1>
         <button
