@@ -39,18 +39,17 @@ export const updateBookSchema = z.object({
 });
 
 export const listBooksSchema = z.object({
-    body: z.object({
-        id: z
-            .string({ message: "O ID precisa ser um texto" })
-    }),
+    body: z.object({}).optional(),
     query: z.object({}).optional(),
-    params: z.object({}).optional(),
+    params: z.object({
+        id: z.string({ message: "O ID precisa ser um texto" }),
+    }).optional(),
 });
 
 export const deleteBooksSchema = z.object({
     body: z.object({
         id: z
-            .string({ message: "O ID precisa ser um texto" })
+            .string({ message: "O ID precisa ser um texto" }).min(1, { message: "O ID é obrigatório" }),
     }),
     query: z.object({}).optional(),
     params: z.object({}).optional(),

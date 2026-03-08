@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import api from "@/services/api";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
+import BookFormModal from "@/components/BookFormModal";
+
 interface Book {
   id: number;
   title: string;
@@ -17,6 +19,7 @@ interface Book {
 export default function BookList() {
   const [books, setBooks] = useState<Book[]>([]);
   const router = useRouter();
+  const [showModalEdit, setShowModalEdit] = useState(false);
 
   useEffect(() => {
     async function fetchBooks() {
@@ -34,7 +37,8 @@ export default function BookList() {
     <div className="min-h-screen bg-background px-8 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-[2.5rem] font-bold text-foreground">Livros</h1>
-        <button className="text-2xl font-bold text-foreground hover:opacity-70 transition-opacity">
+        <button className="text-2xl font-bold text-foreground hover:opacity-70 transition-opacity"
+          onClick={() => setShowModalEdit(true)}>
           Novo
         </button>
       </div>
@@ -76,6 +80,13 @@ export default function BookList() {
           </div>
         ))}
       </div>
+      {showModalEdit && (
+        <BookFormModal
+          title="Criar Livro"
+          onCancel={() => setShowModalEdit(false)}
+          onSave={() => window.location.reload()}
+        />
+      )}
     </div>
   );
 }

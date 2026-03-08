@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ConfirmModal from "@/components/ConfirmModal";
+import BookFormModal from "@/components/BookFormModal";
 
 import api from "@/services/api";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { time } from "console";
 
 interface Book {
   id: number;
@@ -20,16 +22,29 @@ export default function BookDetails() {
   const { id } = useParams();
   const router = useRouter();
   const [book, setBook] = useState<Book | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
 
   useEffect(() => {
     async function fetchBook() {
+      setLoading(true);
+      setError(null);
+
       try {
-        const response = await api.post<Book>("/book/show", { id: id });
+        const response = await api.get<Book>(`/book/show/${id}`);
         setBook(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar livro:", error);
+      } catch (err: any) {
+        if (err.code === "ECONNABORTED") {
+          setError("Servidor demorou para responder, tente novamente.");
+        } else {
+          setError("Erro ao buscar livro.");
+        }
+      }
+      finally {
+        setLoading(false);
       }
     }
 
@@ -48,12 +63,29 @@ export default function BookDetails() {
   }
 
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-8 py-8">
+        <p className="p-8">Carregando livro...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-8 py-8">
+        <p className="p-8">{error}</p>
+      </div>
+    );
+  }
+
   if (!book) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-8 py-8">
-        <p className="p-8">Erro ao carregar dados do livro..</p>
+        <p className="p-8">Nenhum livro encontrado.</p>
       </div>
     );
+
   }
 
   return (
@@ -65,11 +97,12 @@ export default function BookDetails() {
           Voltar
         </button>
         <div className="flex items-center gap-4">
-          <button className="text-[24px] font-semibold text-foreground hover:opacity-70 transition-opacity">
+          <button className="text-[24px] font-semibold text-foreground hover:opacity-70 transition-opacity"
+            onClick={() => setShowModalEdit(true)}>
             Editar
           </button>
           <button className="text-[24px] font-semibold text-red-600 hover:opacity-70 transition-opacity"
-            onClick={() => setShowModal(true)}>
+            onClick={() => setShowModalDelete(true)}>
             Excluir
           </button>
         </div>
@@ -99,8 +132,8 @@ export default function BookDetails() {
           className="w-72 object-contain shrink-0"
         />
       </div>
-      {/* Modal de confirmação */}
-      {showModal && (
+
+      {showModalDelete && (
         <ConfirmModal
           title="Tem certeza?"
           message="Ao excluir este livro não será possível recuperá-lo. Realmente deseja excluí-lo?"
@@ -109,10 +142,18 @@ export default function BookDetails() {
           confirmColor="bg-[#A70000] hover:bg-red-700 text-white"
           cancelColor="bg-[#D5D5D5] hover:bg-gray-300 text-black"
           onConfirm={handleDelete}
-          onCancel={() => setShowModal(false)}
+          onCancel={() => setShowModalDelete(false)}
         />
       )}
 
+      {showModalEdit && (
+        <BookFormModal
+          title="Editar Livro"
+          book={book}
+          onCancel={() => setShowModalEdit(false)}
+          onSave={() => { console.log("Salvar edição") }}
+        />
+      )}
     </div>
   );
 }
