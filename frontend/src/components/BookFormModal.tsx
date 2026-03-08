@@ -150,15 +150,16 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
         <h2 className="text-2xl font-bold mb-6 text-center">{title}</h2>
 
         <div className="flex gap-6">
-          {/* Coluna esquerda - campos */}
+       
           <div className="flex-1 flex flex-col gap-4">
             <input type="text" placeholder="Título" value={bookTitle} onChange={(e) => setBookTitle(e.target.value)} className="border rounded-lg px-4 py-2" />
             <input type="text" placeholder="Autor" value={author} onChange={(e) => setAuthor(e.target.value)} className="border rounded-lg px-4 py-2" />
-            <input type="date" value={publicationDate} onChange={(e) => setPublicationDate(e.target.value)} className="border rounded-lg px-4 py-2" />
+            <input type="date" value={publicationDate ? new Date(publicationDate).toISOString().split("T")[0] : ""}
+     onChange={(e) => setPublicationDate(e.target.value)} className="border rounded-lg px-4 py-2" />
             <textarea placeholder="Descrição" value={description} onChange={(e) => setDescription(e.target.value)} className="border rounded-lg px-4 py-2 h-32 resize-none" />
           </div>
 
-          {/* Coluna direita - imagem */}
+         
           <div className="w-64 flex flex-col items-center justify-center border rounded-lg p-4">
             {preview ? (
               <>

@@ -109,7 +109,7 @@ export default function BookDetails() {
       </div>
 
       <div className="flex items-start gap-10">
-        {/* Coluna esquerda */}
+  
         <div className="flex-1">
           <h1 className="text-[40px] font-bold text-foreground mb-6 leading-tight">
             {book.title}
@@ -117,7 +117,7 @@ export default function BookDetails() {
           <div className="flex items-center justify-between mb-4">
             <p className="text-[20px] font-semibold text-foreground">Por {book.author}</p>
             <p className="text-[20px] font-semibold text-foreground">
-              Publicado em {new Date(book.publication_date).toLocaleDateString("pt-BR")}
+              Publicado em {new Date(book.publication_date).toLocaleDateString("pt-BR",{ timeZone: "UTC" })}
             </p>
           </div>
           <p className="text-[16px] text-foreground text-justify leading-relaxed">
@@ -125,7 +125,6 @@ export default function BookDetails() {
           </p>
         </div>
 
-        {/* Imagem */}
         <img
           src={book.picture_url}
           alt={book.title}
