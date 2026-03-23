@@ -6,7 +6,7 @@ Sistema para cadastro, visualização, edição e remoção de livros com Backen
 
 - Docker >= v24.0.0
 - docker-compose >= v2.20.0
-- Plataforma x86_64 (não testado em ARM)
+- Plataforma x86_64 
 
 ## Executando com Docker (recomendado)
 
@@ -23,7 +23,7 @@ O arquivo `.env.example` já vem com valores prontos para uso local. Você pode 
 ### 2. Suba todos os serviços
 
 ```bash
-# Builda as imagens e sobe todos os serviços (Banco de dados + Backend + Frontend)
+
 docker compose up -d --build
 ```
 
@@ -138,8 +138,9 @@ docker compose down -v
 ```bash
 cd backend
 npm install
-cp .env.example .env   # configure DATABASE_URL apontando para seu PostgreSQL local
-npx prisma migrate deploy
+cp .env.example .env   
+npx prisma migrate dev
+npx prisma generate
 npm run dev
 ```
 
@@ -148,6 +149,6 @@ npm run dev
 ```bash
 cd frontend
 npm install
-cp .env.example .env.local   # configure NEXT_PUBLIC_API_URL
+cp .env.example .env.local   
 npm run dev
 ```

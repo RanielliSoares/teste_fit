@@ -8,12 +8,12 @@ import { CreateBookController } from "./controllers/CreateBookController";
 import { ShowBookController } from "./controllers/ShowBookController";
 import { UpdateBookController } from "./controllers/UpdateBookController";
 import { DeleteBookController } from "./controllers/DeleteBookController";
-import { listBooksSchema, updateBookSchema, deleteBooksSchema, createBookSchema } from "./schemas/BookSchema";
+import { updateBookSchema, deleteBooksSchema, createBookSchema } from "./schemas/BookSchema";
 
 const router = Router();
 const upload = multer(uploadConfig);
 
-router.post("/books", upload.single("file"), new CreateBookController().handle);
+router.post("/books", upload.single("file"), validateSchema(createBookSchema),new CreateBookController().handle);
 router.get("/books", new ListBookController().handle);
 
 router.get("/book/show/:id", new ShowBookController().handle);

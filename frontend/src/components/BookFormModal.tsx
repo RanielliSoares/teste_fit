@@ -14,6 +14,31 @@ interface Book {
   picture_url?: string;
 }
 
+const MIN_DESCRIPTION_LENGTH = 10;
+const DEFAULT_ERROR_MESSAGE = "Nao foi possivel salvar o livro. Tente novamente.";
+
+function getApiErrorMessage(error: unknown): string {
+  if (typeof error !== "object" || error === null) {
+    return DEFAULT_ERROR_MESSAGE;
+  }
+
+  const axiosLikeError = error as {
+    response?: {
+      data?: {
+        details?: Array<{ message?: string }>;
+        error?: string;
+      };
+    };
+  };
+
+  const detailsMessage = axiosLikeError.response?.data?.details?.[0]?.message;
+  if (detailsMessage) {
+    return detailsMessage;
+  }
+
+  return axiosLikeError.response?.data?.error || DEFAULT_ERROR_MESSAGE;
+}
+
 interface BookFormModalProps {
   title: string;
   book?: Book | null;
@@ -37,6 +62,7 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
   const [description, setDescription] = useState("");
   const [picture, setPicture] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -52,11 +78,14 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
   }, [book]);
 
 
+  const descriptionTrimmed = description.trim();
+  const descriptionMeetsMinLength = descriptionTrimmed.length >= MIN_DESCRIPTION_LENGTH;
+
   const isFormValid =
-    bookTitle.trim() &&
-    author.trim() &&
-    publicationDate.trim() &&
-    description.trim() &&
+    Boolean(bookTitle.trim()) &&
+    Boolean(author.trim()) &&
+    Boolean(publicationDate.trim()) &&
+    descriptionMeetsMinLength &&
     (picture || preview);
 
 
@@ -74,6 +103,8 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
 
 
   async function handleCreateBook() {
+    setSubmitError(null);
+
     const formData = new FormData();
     formData.append("title", bookTitle);
     formData.append("author", author);
@@ -93,6 +124,7 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
       onCancel();
       router.refresh();
     } catch (error) {
+      setSubmitError(getApiErrorMessage(error));
       console.error("Erro ao criar livro:", error);
     }
   }
@@ -103,6 +135,8 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
     if (!book || !book.id) return;
 
     try {
+      setSubmitError(null);
+
       if (picture) {
 
         const formData = new FormData();
@@ -140,6 +174,7 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
       onCancel();
 
     } catch (error) {
+      setSubmitError(getApiErrorMessage(error));
       console.error("Erro ao atualizar livro:", error);
     }
   }
@@ -156,7 +191,24 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
             <input type="text" placeholder="Autor" value={author} onChange={(e) => setAuthor(e.target.value)} className="border rounded-lg px-4 py-2" />
             <input type="date" value={publicationDate ? new Date(publicationDate).toISOString().split("T")[0] : ""}
      onChange={(e) => setPublicationDate(e.target.value)} className="border rounded-lg px-4 py-2" />
-            <textarea placeholder="Descrição" value={description} onChange={(e) => setDescription(e.target.value)} className="border rounded-lg px-4 py-2 h-32 resize-none" />
+            <div className="flex flex-col gap-1">
+              <textarea
+                placeholder="Descrição"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className={`border rounded-lg px-4 py-2 h-32 resize-none ${descriptionTrimmed.length > 0 && !descriptionMeetsMinLength ? "border-red-500" : ""}`}
+                aria-invalid={descriptionTrimmed.length > 0 && !descriptionMeetsMinLength}
+              />
+              <p className="text-xs min-h-[1rem] text-gray-500">
+                {descriptionTrimmed.length > 0 && !descriptionMeetsMinLength ? (
+                  <span className="text-red-600">
+                    A descrição deve ter no mínimo {MIN_DESCRIPTION_LENGTH} caracteres ({descriptionTrimmed.length}/{MIN_DESCRIPTION_LENGTH})
+                  </span>
+                ) : descriptionTrimmed.length === 0 ? (
+                  <>Mínimo de {MIN_DESCRIPTION_LENGTH} caracteres</>
+                ) : null}
+              </p>
+            </div>
           </div>
 
          
@@ -192,6 +244,9 @@ export default function BookFormModal({ title, book, onCancel, onSave }: BookFor
             Salvar
           </button>
         </div>
+        {submitError ? (
+          <p className="mt-3 text-sm text-red-600 text-center">{submitError}</p>
+        ) : null}
       </div>
     </div>
   );
