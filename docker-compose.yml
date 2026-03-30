@@ -27,7 +27,7 @@ services:
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       PORT: 8000
-      APP_URL: http://localhost:${API_PORT}
+      APP_URL: http://3.128.245.174:${API_PORT}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
     volumes:
       - ./backend/uploads:/app/uploads
@@ -42,12 +42,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:${API_PORT}
+        - NEXT_PUBLIC_API_URL=http://3.128.245.174:${API_PORT}
     container_name: frontend
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:${API_PORT}
+      - NEXT_PUBLIC_API_URL=http://3.128.245.174:${API_PORT}
     depends_on:
       - api
     restart: unless-stopped

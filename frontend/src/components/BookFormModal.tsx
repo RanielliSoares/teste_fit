@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import selectImage from "@/assets/selectImage.png";
 import api from "@/services/api";
 
-interface Book {
+interface EditableBook {
   id?: string;
   title: string;
   author: string;
@@ -41,7 +41,7 @@ function getApiErrorMessage(error: unknown): string {
 
 interface BookFormModalProps {
   title: string;
-  book?: Book | null;
+  book?: EditableBook | null;
   onCancel: () => void;
   onSave: (data: {
     title: string;

@@ -10,7 +10,7 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 
 
 interface Book {
-  id: number;
+  id: string;
   title: string;
   author: string;
   description: string;

@@ -8,7 +8,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import BookFormModal from "@/components/BookFormModal";
 
 interface Book {
-  id: number;
+  id: string;
   title: string;
   author: string;
   description: string;
